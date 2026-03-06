@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HappyWork - 开心工作记录</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Chart -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Icons -->
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<script>
+tailwind.config={darkMode:'class'}
+</script>
+
+<style>
+
+html{scroll-behavior:smooth}
+
+.card{
+transition:all .25s
+}
+
+.card:hover{
+transform:translateY(-3px);
+box-shadow:0 10px 30px rgba(0,0,0,.08)
+}
+
+.btn{
+transition:all .2s
+}
+
+.btn:hover{
+transform:scale(1.05)
+}
+
+</style>
+
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-200">
+
+<!-- HEADER -->
+
+<header class="border-b bg-white dark:bg-gray-900 dark:border-gray-800">
+
+<div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+
+<div class="font-semibold text-lg flex gap-2 items-center">
+<i class="fa-solid fa-chart-line text-indigo-500"></i>
+HappyWork
+</div>
+
+<button id="themeToggle"
+class="border px-3 py-2 rounded-lg btn dark:border-gray-700">
+<i class="fa-solid fa-moon"></i>
+</button>
+
+</div>
+
+</header>
+
+
+<main class="max-w-6xl mx-auto px-6 py-10 space-y-10">
+
+
+<!-- 输入 -->
+
+<section class="card bg-white dark:bg-gray-900 border dark:border-gray-800 rounded-xl p-6">
+
+<h2 class="font-semibold mb-4">新增工作</h2>
+
+<div class="grid md:grid-cols-4 gap-4">
+
+<input id="task"
+placeholder="工作内容"
+class="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:border-gray-700">
+
+<input id="time"
+type="number"
+step="0.1"
+placeholder="小时"
+class="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:border-gray-700">
+
+<select id="mood"
+class="border rounded-lg px-3 py-2 dark:bg-gray-800 dark:border-gray-700">
+
+<option value="1">开心</option>
+<option value="0">厌恶</option>
+
+</select>
+
+<button onclick="addTask()"
+class="btn bg-indigo-600 text-white rounded-lg px-4 py-2">
+
+<i class="fa-solid fa-plus"></i> 添加
+
+</button>
+
+</div>
+
+</section>
+
+
+<!-- 表格 -->
+
+<section class="grid md:grid-cols-2 gap-6">
+
+
+<div class="card bg-white dark:bg-gray-900 border dark:border-gray-800 rounded-xl p-6">
+
+<h3 class="font-semibold mb-4">
+
+<i class="fa-solid fa-face-smile text-green-500"></i>
+开心部分
+
+</h3>
+
+<table class="w-full text-sm">
+
+<thead>
+
+<tr class="text-gray-500">
+<th>序号</th>
+<th>内容</th>
+<th>时长</th>
+</tr>
+
+</thead>
+
+<tbody id="happyTable"></tbody>
+
+</table>
+
+</div>
+
+
+
+<div class="card bg-white dark:bg-gray-900 border dark:border-gray-800 rounded-xl p-6">
+
+<h3 class="font-semibold mb-4">
+
+<i class="fa-solid fa-face-frown text-red-500"></i>
+厌恶部分
+
+</h3>
+
+<table class="w-full text-sm">
+
+<thead>
+
+<tr class="text-gray-500">
+<th>序号</th>
+<th>内容</th>
+<th>时长</th>
+</tr>
+
+</thead>
+
+<tbody id="hateTable"></tbody>
+
+</table>
+
+</div>
+
+
+</section>
+
+
+<!-- 统计 -->
+
+<section class="card bg-white dark:bg-gray-900 border dark:border-gray-800 rounded-xl p-6">
+
+<h3 class="font-semibold mb-6">
+今日开心度分析
+</h3>
+
+<div class="grid md:grid-cols-2 gap-8 items-center">
+
+<canvas id="chart"></canvas>
+
+<div>
+
+<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
+
+<div id="bar"
+class="bg-indigo-500 h-4 rounded-full"></div>
+
+</div>
+
+<p id="result"
+class="mt-4 text-lg font-medium"></p >
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<footer class="border-t mt-16 dark:border-gray-800">
+
+<div class="max-w-6xl mx-auto px-6 py-10 text-sm text-gray-500 space-y-4">
+
+<div>作者姓名: 蒋宗延</div>
+
+<div class="flex gap-6 text-lg">
+
+<a href=" "><i class="fa-brands fa-github"></i></a >
+
+<a href="#"><i class="fa-brands fa-x-twitter"></i></a >
+
+<a href="#"><i class="fa-brands fa-linkedin"></i></a >
+
+</div>
+
+<div>© 2026 蒋宗延</div>
+
+</div>
+
+</footer>
+
+
+
+<script>
+
+
+/* 深色模式 */
+
+if(localStorage.theme==="dark"){
+document.documentElement.classList.add("dark")
+}
+
+document.getElementById("themeToggle").onclick=()=>{
+
+document.documentElement.classList.toggle("dark")
+
+localStorage.theme=
+document.documentElement.classList.contains("dark")?"dark":"light"
+
+}
+
+
+
+/* 数据 */
+
+let data=JSON.parse(localStorage.getItem("happywork")||"[]")
+
+function addTask(){
+
+let task=document.getElementById("task").value
+
+let time=parseFloat(document.getElementById("time").value)
+
+let mood=document.getElementById("mood").value
+
+if(!task||!time)return
+
+data.push({task,time,mood})
+
+localStorage.setItem("happywork",JSON.stringify(data))
+
+render()
+
+}
+
+
+
+let chart
+
+
+function render(){
+
+let happy=data.filter(i=>i.mood=="1")
+
+let hate=data.filter(i=>i.mood=="0")
+
+let happyTable=document.getElementById("happyTable")
+
+let hateTable=document.getElementById("hateTable")
+
+happyTable.innerHTML=""
+
+hateTable.innerHTML=""
+
+happy.forEach((i,index)=>{
+
+happyTable.innerHTML+=
+`<tr><td>${index+1}</td><td>${i.task}</td><td>${i.time}</td></tr>`
+
+})
+
+hate.forEach((i,index)=>{
+
+hateTable.innerHTML+=
+`<tr><td>${index+1}</td><td>${i.task}</td><td>${i.time}</td></tr>`
+
+})
+
+let happyTime=happy.reduce((s,i)=>s+i.time,0)
+
+let hateTime=hate.reduce((s,i)=>s+i.time,0)
+
+let total=happyTime+hateTime
+
+let percent=total?((happyTime/total)*100).toFixed(1):0
+
+document.getElementById("result").innerText=
+"开心工作占比: "+percent+"%"
+
+document.getElementById("bar").style.width=percent+"%"
+
+
+
+let ctx=document.getElementById("chart")
+
+if(chart) chart.destroy()
+
+chart=new Chart(ctx,{
+
+type:"doughnut",
+
+data:{
+labels:["开心","厌恶"],
+datasets:[{
+data:[happyTime,hateTime]
+}]
+}
+
+})
+
+}
+
+render()
+
+</script>
+
+</body>
+</html>
